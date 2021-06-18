@@ -2,7 +2,7 @@ import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
-import { useUser } from "../context";
+import { useUser } from "../../userContext";
 
 const logout = () => {
   axios.get("/logout");

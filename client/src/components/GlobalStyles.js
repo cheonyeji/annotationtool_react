@@ -15,6 +15,21 @@ const globalStyles = createGlobalStyle`
         font-size: 14px;
         padding-top: 80px;
     }
+    
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        background-color: gray;
+    }
+    &::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
+    }
 `;
 
 export default globalStyles;

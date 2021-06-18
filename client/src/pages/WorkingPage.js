@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Form } from "antd";
 import styled from "styled-components";
+import { useDispatch, useRectInfo } from "../rectContext";
+import { ADD } from "../actions";
 
 const initialProducts = {
   image_array: [], // array of strings
@@ -21,6 +23,7 @@ let canvas,
   drag = false,
   selectedImgView;
 let rectArr = [];
+let rectTmp = [];
 
 const drawRect = (sx, sy, w, h) => {
   ctx.setLineDash([]);
@@ -36,6 +39,7 @@ const drawAllRect = () => {
 
 const mouseDown = (e) => {
   if (rectArr.length !== 0) drawAllRect();
+  rectTmp = [];
   rect.startX = e.offsetX;
   rect.startY = e.offsetY;
   drag = true;
@@ -50,6 +54,7 @@ const mouseUp = (e) => {
   ctx.setLineDash([]);
   ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
   rectArr.push(rect);
+  rectTmp.push(rect);
   rect = {};
 };
 const mouseMove = (e) => {
@@ -76,6 +81,14 @@ const loadImgView = () => {
 
 function WorkingPage() {
   let canvasRef = useRef();
+  const dispatch = useDispatch();
+  const rectState = useRectInfo();
+
+  const saveRectInfo = () => {
+    saveHandler();
+    dispatch({ type: ADD, payload: rectTmp });
+    console.log(rectState);
+  };
 
   useEffect(() => {
     loadImgList();
@@ -86,7 +99,10 @@ function WorkingPage() {
     canvas = canvasRef.current;
     ctx = canvas.getContext("2d");
     canvas.addEventListener("mousedown", mouseDown);
-    canvas.addEventListener("mouseup", mouseUp);
+    canvas.addEventListener("mouseup", (e) => {
+      mouseUp(e);
+      saveRectInfo();
+    });
     canvas.addEventListener("mousemove", mouseMove);
   }, []);
 
@@ -150,7 +166,10 @@ function WorkingPage() {
     ul.innerHTML = "";
     const rectMap = new Map(Object.entries(RectInfo));
     rectMap.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
+      const li = document.createElement("li");
+      li.innerHTML = `${key}: ${value}`;
+      console.log(value);
+      ul.appendChild(li);
     });
   };
 
@@ -174,7 +193,6 @@ function WorkingPage() {
     axios.post("/images/upload", formData).then((res) => res.data);
   };
 
-  // dir 자체를 선택하는 거 잘안나와서 우선 아무 파일이나 택하면 그 경로 선택하는 코드로 짬
   const downloadHandler = (e) => {
     axios
       .get("/images/download")

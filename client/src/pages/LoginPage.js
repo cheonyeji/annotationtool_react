@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import { useFns, useUser } from "../context";
+import { useFns, useUser } from "../userContext";
 import kakaologo from "../img/kakao_login.png";
 import naverlogo from "../img/naver_login.png";
 
 export default function LoginPage() {
   const { logUserIn } = useFns();
   const loginHandler = () => {
-    logUserIn();
-    // axios.get(/auth/kakao) 이런식으로 해서 완료된 결과값을 받아온 후 logUserIn해줘야함
+    // logUserIn();
   };
   return (
     <Wrapper>
